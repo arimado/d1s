@@ -20,6 +20,14 @@ const connectionsDB = (db) => {
     return getCollection(db, 'connections');
 }
 
+const stateDB = (db) => {
+    return getCollection(db, 'state');
+}
+
+const decksDB = (db) => {
+    return getCollection(db, 'decks');
+}
+
 db.connect(DB_URL, (err) => {
     if (err) {
         console.log('could not connect to DB');
@@ -38,11 +46,25 @@ app.get('/',
         res.send("You've reached the server for d1");
 });
 
-app.post('/state',
+app.post('/api/state',
     (req, res) => {
         let state = JSON.parse(req.body.data);
-        let stateDB = db.get
-})
+        stateDB().insert({ data: state })
+});
+
+app.get('/api/hello',
+(req, res) => {
+    res.json({"content": "hello world!"})
+});
+
+
+
+// INSERT deck
+app.post('/api/decks',
+(req, res) => {
+    let deck = JSON.parse(req.body.data);
+    stateDB().insert({ data: deck })
+});
 
 http.listen(process.env.PORT || 3005, function () {
     let port = process.env.PORT || 3005;
