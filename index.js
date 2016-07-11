@@ -2,15 +2,20 @@
 
 // MODULES
 
-const express   = require('express');
-const app       = express();
-const http      = require('http').Server(app);
-const path      = require('path');
-const fs        = require('fs');
-const db        = require('./db.js')
+const express       = require('express');
+const app           = express();
+const http          = require('http').Server(app);
+const path          = require('path');
+const fs            = require('fs');
+const db            = require('./db.js');
+const bodyParser    = require('body-parser');
 // --------------------------------------------------------
+// ENABLE JSON
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
 
 const DB_URL = 'mongodb://localhost:27017/d1';
+const PORT = process.env.PORT || 3005;
 
 const getCollection = (db, collection) => {
     return db.get().collection(collection);
@@ -62,11 +67,10 @@ app.get('/api/hello',
 // INSERT deck
 app.post('/api/decks',
 (req, res) => {
-    let deck = JSON.parse(req.body.data);
-    stateDB().insert({ data: deck })
+    console.log(req.body);
+    res.json({"result": "success"})
 });
 
-http.listen(process.env.PORT || 3005, function () {
-    let port = process.env.PORT || 3005;
-    console.log('listening on: ', port);
+http.listen( PORT, function () {
+    console.log('listening on: ', PORT);
 });
