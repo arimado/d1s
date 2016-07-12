@@ -97,7 +97,7 @@ app.post('/api/decks',
 (req, res) => {
     decksDB(db).insert(req.body.decks, (error) => {
         questionsDB(db).insert(req.body.questions, (error) => {
-            answersDB(db).insert(req.body.questions, (error) => {
+            answersDB(db).insert(req.body.answers, (error) => {
                 if (error) res.json({"result": "failure"})
                 res.json({"result": "success"})
             })
