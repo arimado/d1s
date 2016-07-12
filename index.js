@@ -73,6 +73,24 @@ app.get('/api/hello',
 });
 
 
+app.get('/api/decks',
+(req, res) => {
+    console.log('I recieved a get request');
+
+    decksDB(db).find({}).toArray((err, decks) => {
+        questionsDB(db).find({}).toArray((err, questions) => {
+                answersDB(db).find({}).toArray((err, answers) => {
+                    res.json({
+                            decks: decks,
+                            questions: questions,
+                            answers: answers
+                     })
+                })
+        })
+    })
+
+});
+
 
 // INSERT deck
 app.post('/api/decks',
