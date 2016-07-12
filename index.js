@@ -9,6 +9,8 @@ const path          = require('path');
 const fs            = require('fs');
 const db            = require('./db.js');
 const bodyParser    = require('body-parser');
+const lodash        = require('lodash');
+
 // --------------------------------------------------------
 // ENABLE JSON
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,6 +33,14 @@ const stateDB = (db) => {
 
 const decksDB = (db) => {
     return getCollection(db, 'decks');
+}
+
+const questionsDB = (db) => {
+    return getCollection(db, 'questions');
+}
+
+const answersDB = (db) => {
+    return getCollection(db, 'answers');
 }
 
 db.connect(DB_URL, (err) => {
@@ -67,8 +77,14 @@ app.get('/api/hello',
 // INSERT deck
 app.post('/api/decks',
 (req, res) => {
-    console.log(req.body);
-    res.json({"result": "success"})
+    decksDB(db).insert(req.body.decks, (error) => {
+        questionsDB(db).insert(req.body.questions, (error) => {
+            answersDB(db).insert(req.body.questions, (error) => {
+                if (error) res.json({"result": "failure"})
+                res.json({"result": "success"})
+            })
+        })
+    })
 });
 
 http.listen( PORT, function () {
