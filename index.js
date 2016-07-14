@@ -47,6 +47,10 @@ const answersDB = (db) => {
     return getCollection(db, 'answers');
 }
 
+const matchesDB = (db) => {
+    return getCollection(db, 'matches');
+}
+
 db.connect(DB_URL, (err) => {
     if (err) {
         console.log('could not connect to DB');
@@ -75,23 +79,23 @@ app.get('/api/hello',
 app.get('/api/decks',
 (req, res) => {
     console.log('GET /api/decks -------------------------- ');
-
     decksDB(db).find({}).toArray((err, decks) => {
         questionsDB(db).find({}).toArray((err, questions) => {
                 answersDB(db).find({}).toArray((err, answers) => {
-
-                    console.log('im giving back this: ')
-                    console.log('decks: ', decks.length)
-                    console.log('questions: ', questions.length)
-                    console.log('answers: ', answers.length)
-
-                    console.log('SUCCESS -------------------------- ');
-
-                    res.json({
+                    usersDB(db).find({}).toArray((err, users) => {
+                        console.log('im giving back this: ')
+                        console.log('decks: ', decks.length)
+                        console.log('questions: ', questions.length)
+                        console.log('answers: ', answers.length)
+                        console.log('users: ', users.length)
+                        console.log('SUCCESS -------------------------- ');
+                        res.json({
                             decks: decks,
                             questions: questions,
-                            answers: answers
-                     })
+                            answers: answers,
+                            users: users
+                        })
+                    })
                 })
         })
     })
@@ -112,14 +116,7 @@ app.post('/api/decks',
     })
 });
 
-
-// INSERT deck
-app.get('/api/users',
-(req, res) => {
-    res.send('GET /api/users')
-});
-
-// INSERT deck
+// INSERT user
 app.post('/api/users',
 (req, res) => {
     console.log('POST: /api/users')
@@ -128,6 +125,27 @@ app.post('/api/users',
         res.json({"result": "success"})
     })
 });
+
+
+// MATCHES
+
+app.post('/api/matches',
+(req, res) => {
+    console.log('POST: /api/matches')
+    console.log(req.body);
+    matchesDB(db).insert(req.body, (error) => {
+        res.json({"result": "success"})
+    })
+
+
+});
+
+
+
+
+
+
+
 
 http.listen( PORT, function () {
     console.log('listening on: ', PORT);
