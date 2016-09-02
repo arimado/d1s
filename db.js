@@ -10,7 +10,7 @@ exports.connect = function (url, done) {
     if (state.db) return done();
     MongoClient.connect(url, function(err, db) {
         state.db = db;
-        done();
+        done(db);
     });
 }
 

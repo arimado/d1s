@@ -16,10 +16,17 @@ const lodash        = require('lodash');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
+// const DB_URL = process.env.MONGOLAB_URI ? process.env.MONGOLAB_URI : 'mongodb://localhost:27017/d1';
 const DB_URL = 'mongodb://localhost:27017/d1';
+
 const PORT = process.env.PORT || 3005;
 
 const getCollection = (db, collection) => {
+
+    // if(db.get() === null) {
+    //
+    // }
+    //
     return db.get().collection(collection);
 }
 
@@ -51,11 +58,11 @@ const matchesDB = (db) => {
     return getCollection(db, 'matches');
 }
 
-db.connect(DB_URL, (err) => {
-    if (err) {
-        console.log('could not connect to DB');
+db.connect(DB_URL, (db) => {
+    if (db) {
+        console.log('Connected to database.');
     } else {
-        console.log('connected to DB');
+        console.log('could not connect to database');
     }
 });
 
@@ -105,7 +112,8 @@ app.get('/api/decks',
 
 // INSERT deck
 app.post('/api/decks',
-(req, res) => {    
+(req, res) => {
+    console.log('inserting deck')
     decksDB(db).insert(req.body.decks, (error) => {
         questionsDB(db).insert(req.body.questions, (error) => {
             answersDB(db).insert(req.body.answers, (error) => {
@@ -136,8 +144,6 @@ app.post('/api/matches',
     matchesDB(db).insert(req.body, (error) => {
         res.json({"result": "success"})
     })
-
-
 });
 
 
@@ -148,5 +154,6 @@ app.post('/api/matches',
 
 
 http.listen( PORT, function () {
+    console.log('connecting to: ', DB_URL);
     console.log('listening on: ', PORT);
 });
